@@ -38,6 +38,10 @@
     padding: 0;
 }
 
+.is-hidden {
+    display: none;
+}
+
 html {
     scroll-behavior: smooth;
     font-size: 16px;
@@ -76,8 +80,8 @@ ul {
     justify-content: center;
     padding: 24px;
     background: rgba(15, 23, 42, 0.72);
-    backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -486,6 +490,7 @@ ul {
 .btn-glass {
     background: rgba(255, 255, 255, 0.15);
     color: var(--text-white);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -616,8 +621,8 @@ ul {
     line-height: 1.1;
     margin-bottom: 16px;
     background: linear-gradient(180deg, #FFFFFF 0%, #FFFBEB 70%, var(--primary-gold) 100%);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
@@ -646,6 +651,7 @@ ul {
     flex-wrap: wrap;
     justify-content: center;
     background: rgba(15, 23, 42, 0.6);
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.12);
     padding: 14px 28px;
@@ -790,8 +796,8 @@ ul {
 .main-navbar {
     position: relative;
     background: rgba(15, 23, 42, 0.88);
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(217, 119, 6, 0.25);
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -866,8 +872,8 @@ ul {
     font-size: 1.4rem;
     font-weight: 800;
     background: linear-gradient(180deg, #FFFFFF 20%, #FDE68A 100%);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.02em;
 }
@@ -889,6 +895,7 @@ ul {
     padding: 4px 6px;
     border-radius: var(--radius-full);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
 }
@@ -1114,8 +1121,8 @@ ul {
     position: fixed;
     inset: 0;
     background: rgba(10, 15, 29, 0.75);
-    backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     z-index: 1050;
     opacity: 0;
     visibility: hidden;
@@ -1488,6 +1495,7 @@ ul {
     bottom: 14px;
     right: 14px;
     background: rgba(15, 23, 42, 0.85);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     color: #FBBF24;
     padding: 4px 10px;
@@ -1695,6 +1703,7 @@ ul {
     bottom: 12px;
     left: 14px;
     background: rgba(220, 38, 38, 0.95);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     color: white;
     padding: 4px 12px;
@@ -1882,6 +1891,7 @@ ul {
     border: 1px solid rgba(217, 119, 6, 0.3);
     border-radius: var(--radius-lg);
     overflow: hidden;
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     transition: all 0.35s ease;
     display: flex;
@@ -1924,6 +1934,7 @@ ul {
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 1px;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 
@@ -2023,6 +2034,7 @@ ul {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-lg);
     padding: 20px 24px;
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     flex-wrap: wrap;
     gap: 16px;
@@ -2754,6 +2766,15 @@ ul {
     height: 100%;
     background: var(--primary-gold);
     border-radius: var(--radius-full);
+}
+
+.progress-bar .fill-98 { width: 98%; }
+.progress-bar .fill-96 { width: 96%; }
+.progress-bar .fill-97 { width: 97%; }
+
+.map-frame {
+    border: 0;
+    border-radius: 12px;
 }
 
 .percent {

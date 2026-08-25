@@ -11,7 +11,7 @@ function checkAuthStatus() {
             loginGate.classList.remove('active');
         }
         syncUserUI(user);
-        window.location.href = '../index.html';
+        window.location.href = '../home/index.html';
     } else {
         if (loginGate) {
             loginGate.classList.add('active');
@@ -30,18 +30,32 @@ function handleLoginSubmit(event) {
     const phone = phoneInput.value.trim().replace(/[\s-]/g, '');
     const password = passInput.value.trim();
 
-    if (name.length < 2) {
-        showLoginError('Nama pengguna harus diisi minimal 2 karakter.');
+    // Check if account is locked
+    const lockStatus = isAccountLocked(phone);
+    if (lockStatus.locked) {
+        showLoginError(`Akun terkunci karena terlalu banyak percobaan login gagal. Coba lagi dalam ${lockStatus.remainingMins} menit.`);
+        logSecurityEvent('LOGIN_BLOCKED_LOCKOUT', { phone: phone });
         return;
     }
 
-    if (phone.length < 8) {
-        showLoginError('Nomor telepon / WhatsApp minimal 8 digit angka.');
+    // Validate input - Username
+    if (!isValidUsername(name)) {
+        showLoginError('Nama pengguna harus 2-50 karakter (huruf, angka, spasi, dan hyphen saja).');
+        logSecurityEvent('LOGIN_INVALID_NAME', { name: name });
         return;
     }
 
+    // Validate input - Phone
+    if (!isValidPhoneNumber(phone)) {
+        showLoginError('Format nomor telepon tidak valid. Gunakan nomor Indonesia dengan 8-13 digit.');
+        logSecurityEvent('LOGIN_INVALID_PHONE', { phone: phone });
+        return;
+    }
+
+    // Validate input - Password
     if (password.length < 6) {
-        showLoginError('Password minimal 6 angka atau huruf.');
+        showLoginError('Password minimal 6 karakter. Gunakan kombinasi huruf dan angka untuk keamanan lebih baik.');
+        logSecurityEvent('LOGIN_WEAK_PASSWORD', { phone: phone });
         return;
     }
 
@@ -50,25 +64,37 @@ function handleLoginSubmit(event) {
     if (db[phone]) {
         // User exists -> verify password
         if (db[phone].password !== password) {
-            showLoginError('Password salah untuk nomor ini! Silakan masukkan password yang tepat.');
+            recordFailedLoginAttempt(phone);
+            const attempts = JSON.parse(localStorage.getItem(LOGIN_ATTEMPTS_KEY) || '{}');
+            const remainingAttempts = Math.max(0, SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS - (attempts[phone]?.count || 0));
+            
+            showLoginError(`Password salah. Sisa percobaan: ${remainingAttempts}x. Akun akan terkunci setelah ${SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS} percobaan gagal.`);
+            logSecurityEvent('LOGIN_FAILED_WRONG_PASSWORD', { phone: phone });
             return;
         }
 
+        // Successful login
+        resetLoginAttempts(phone);
+        
         // Update name if changed
-        db[phone].name = name;
+        db[phone].name = sanitizeInput(name);
         saveUsersDB(db);
         setActiveUser(phone);
+        
+        // Initialize security session
+        initializeSessionTracking(phone);
+        logSecurityEvent('LOGIN_SUCCESS', { phone: phone });
 
         const loginGate = document.getElementById('login-gate');
         if (loginGate) loginGate.classList.remove('active');
 
         syncUserUI(db[phone]);
         alert(`👋 Selamat datang kembali, ${db[phone].name}! Saldo Titik Poin Anda: ${db[phone].points.toLocaleString('id-ID')} Poin.`);
-        window.location.href = '../index.html';
+        window.location.href = '../home/index.html';
     } else {
         // New Registration -> Grant 25,000 Welcome Points!
         const newUser = {
-            name: name,
+            name: sanitizeInput(name),
             phone: phone,
             password: password,
             points: 25000,
@@ -78,13 +104,18 @@ function handleLoginSubmit(event) {
         db[phone] = newUser;
         saveUsersDB(db);
         setActiveUser(phone);
+        
+        // Initialize security session
+        initializeSessionTracking(phone);
+        logSecurityEvent('REGISTRATION_SUCCESS', { phone: phone });
+
 
         const loginGate = document.getElementById('login-gate');
         if (loginGate) loginGate.classList.remove('active');
 
         syncUserUI(newUser);
         alert(`🎉 Selamat bergabung di Titik Rasa, ${newUser.name}!\n\nNomor Anda (${newUser.phone}) berhasil terdaftar sebagai Member Resmi & mendapatkan BONUS 25.000 Titik Poin! Poin dapat langsung ditukar dengan voucher diskon makanan.`);
-        window.location.href = '../index.html';
+        window.location.href = '../home/index.html';
     }
 }
 
@@ -97,8 +128,8 @@ function showLoginError(msg) {
 }
 
 function fillDemoAccount() {
-    document.getElementById('login-name').value = 'Satria Wibowo';
-    document.getElementById('login-phone').value = '081234567890';
+    document.getElementById('login-name').value = 'Satria Abdi Utama';
+    document.getElementById('login-phone').value = '085137756784';
     document.getElementById('login-pass').value = '123456';
 
     const fakeEvent = { preventDefault: () => { } };

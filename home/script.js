@@ -8,9 +8,9 @@ const STORAGE_CURRENT_USER_KEY = 'titikrasa_current_phone';
 
 // Default Seed User
 const DEFAULT_USERS = {
-    '081234567890': {
-        name: 'Satria Wibowo',
-        phone: '081234567890',
+    '085137756784': {
+        name: 'Satria Abdi Utama',
+        phone: '085137756784',
         password: '123456',
         points: 25000,
         registeredAt: new Date().toISOString()
@@ -35,23 +35,23 @@ let currentItem = {
 };
 
 const MENU_ITEMS = [
-    ['Rendang', 'utama', 38000, 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80', 'Daging sapi dimasak perlahan dengan rempah khas Minang.', 'bestseller'],
-    ['Ayam Betutu', 'utama', 35000, 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', 'Ayam lembut dengan bumbu rempah Bali yang kaya rasa.', 'recommended'],
-    ['Rawon', 'utama', 32000, 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80', 'Sup daging sapi dengan kuah kluwek gurih dan aromatik.'],
-    ['Gulai', 'utama', 30000, 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80', 'Gulai santan berbumbu rempah Nusantara yang harum.'],
-    ['Kari', 'utama', 30000, 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80', 'Kari gurih dengan kuah rempah yang hangat dan lezat.'],
+    ['Rendang', 'utama', 38000, '../assets/menu/rendang.jpeg', 'Daging sapi dimasak perlahan dengan rempah khas Minang.', 'bestseller'],
+    ['Ayam Betutu', 'utama', 35000, '../assets/menu/ayambetutu.jpg', 'Ayam lembut dengan bumbu rempah Bali yang kaya rasa.', 'recommended'],
+    ['Rawon', 'utama', 32000, '../assets/menu/rawon.jpg', 'Sup daging sapi dengan kuah kluwek gurih dan aromatik.'],
+    ['Gulai', 'utama', 30000, '../assets/menu/gulai.jpg', 'Gulai santan berbumbu rempah Nusantara yang harum.'],
+    ['Kari', 'utama', 30000, '../assets/menu/kari.jpg', 'Kari gurih dengan kuah rempah yang hangat dan lezat.'],
     ['Nasi Goreng', 'utama', 28000, 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80', 'Nasi goreng hangat dengan pilihan lauk favorit Anda.', '', ['Ayam', 'Udang', 'Sapi', 'Cumi']],
-    ['Nasi Kuning', 'utama', 26000, 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?auto=format&fit=crop&w=800&q=80', 'Nasi kuning gurih dengan pelengkap khas Nusantara.'],
-    ['Babi Guling', 'utama', 45000, 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', 'Sajian babi guling berbumbu khas Bali.'],
-    ['Mie Aceh', 'utama', 30000, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80', 'Mie berbumbu kari pedas khas Aceh dengan topping pilihan.'],
-    ['Papeda', 'utama', 28000, 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80', 'Papeda lembut disajikan bersama kuah ikan berbumbu.'],
-    ['Pempek', 'utama', 22000, 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80', 'Pempek ikan dengan kuah cuko khas Palembang.'],
-    ['Wedang Jahe', 'minuman', 16000, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80', 'Minuman jahe hangat dengan aroma rempah yang menenangkan.'],
+    ['Nasi Kuning', 'utama', 26000, '../assets/menu/NasiKuning.jpg', 'Nasi kuning gurih dengan pelengkap khas Nusantara.'],
+    ['Babi Guling', 'utama', 45000, '../assets/menu/babiguling.jpg', 'Sajian babi guling berbumbu khas Bali.'],
+    ['Mie Aceh', 'utama', 30000, '../assets/menu/mieaceh.jpg', 'Mie berbumbu kari pedas khas Aceh dengan topping pilihan.'],
+    ['Papeda', 'utama', 28000, '../assets/menu/papeda.jpg', 'Papeda lembut disajikan bersama kuah ikan berbumbu.'],
+    ['Pempek', 'utama', 22000, '../assets/menu/pempek.jpg', 'Pempek ikan dengan kuah cuko khas Palembang.'],
+    ['Wedang Jahe', 'minuman', 16000, '../assets/menu/wedangjahe.jpg', 'Minuman jahe hangat dengan aroma rempah yang menenangkan.'],
     ['Kopi', 'minuman', 18000, 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80', 'Kopi pilihan dengan varian klasik dan modern.', '', ['Latte', 'Americano', 'Cappuccino', 'Kopi Tubruk', 'Es Kopi Susu']],
-    ['Es Cendol Dawet', 'minuman', 18000, 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80', 'Cendol kenyal dengan santan dan gula aren.'],
-    ['Es Teler', 'minuman', 20000, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80', 'Alpukat, kelapa muda, nangka, dan es dengan kuah manis.', 'bestseller'],
-    ['Soda Gembira', 'minuman', 15000, 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=80', 'Soda segar dengan sirup dan susu manis.'],
-    ['Es Daluman', 'minuman', 17000, 'https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80', 'Minuman cincau hijau khas Bali yang menyegarkan.'],
+    ['Es Cendol Dawet', 'minuman', 18000, '../assets/menu/escendol.jpg', 'Cendol kenyal dengan santan dan gula aren.'],
+    ['Es Teler', 'minuman', 20000, '../assets/menu/esteler.jpg', 'Alpukat, kelapa muda, nangka, dan es dengan kuah manis.', 'bestseller'],
+    ['Soda Gembira', 'minuman', 15000, '../assets/menu/sodagembira.jpg', 'Soda segar dengan sirup dan susu manis.'],
+    ['Es Daluman', 'minuman', 17000, '../assets/menu/esdaluman.jpg', 'Minuman cincau hijau khas Bali yang menyegarkan.'],
     ['Matcha', 'minuman', 22000, 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=800&q=80', 'Matcha lembut dengan rasa khas yang seimbang.']
 ];
 
@@ -255,7 +255,7 @@ function handleLogout() {
     if (!confirmLogout) return;
 
     setActiveUser(null);
-    window.location.href = 'login/login.html';
+    window.location.href = '../login/login.html';
 }
 
 
@@ -355,7 +355,7 @@ function claimVoucherDirect(code, discountVal, pointsCost, minSpend) {
     const user = getActiveUser();
     if (!user) {
         alert('Silakan login terlebih dahulu untuk menukarkan poin Anda.');
-        window.location.href = 'login/login.html';
+        window.location.href = '../login/login.html';
         return;
     }
 
@@ -435,7 +435,7 @@ function openOrderModal(foodName, price, imgUrl, autoVoucherCode = '', variants 
     const user = getActiveUser();
     if (!user) {
         alert('Silakan login terlebih dahulu untuk memesan.');
-        window.location.href = 'login/login.html';
+        window.location.href = '../login/login.html';
         return;
     }
 
@@ -639,7 +639,7 @@ function sendWhatsAppOrder() {
         `Mohon segera diproses pesanan saya. Terima kasih! 🙏`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/6281234567890?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/6285137756784?text=${encodedMessage}`;
 
     window.open(whatsappUrl, '_blank');
     closeOrderModal();
@@ -687,6 +687,6 @@ function handleFormSubmit(event) {
         `• *Pesan:* ${messageText || '-'}\n\n` +
         `Mohon konfirmasi ketersediaan meja. Terima kasih!`;
 
-    const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/6285137756784?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
