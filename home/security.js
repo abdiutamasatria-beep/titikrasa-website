@@ -29,12 +29,12 @@ const SESSION_ACTIVITY_KEY = 'titikrasa_session_activity';
  */
 function isAccountLocked(phone) {
     const lockoutData = JSON.parse(localStorage.getItem(LOGIN_LOCKOUT_KEY) || '{}');
-    
+
     if (lockoutData[phone]) {
         const lockTime = new Date(lockoutData[phone].lockedAt).getTime();
         const currentTime = new Date().getTime();
         const lockDurationMs = SECURITY_CONFIG.LOCKOUT_DURATION_MINUTES * 60 * 1000;
-        
+
         if (currentTime - lockTime < lockDurationMs) {
             const remainingMins = Math.ceil((lockDurationMs - (currentTime - lockTime)) / 60000);
             return { locked: true, remainingMins };
@@ -46,7 +46,7 @@ function isAccountLocked(phone) {
             return { locked: false };
         }
     }
-    
+
     return { locked: false };
 }
 
@@ -55,21 +55,21 @@ function isAccountLocked(phone) {
  */
 function recordFailedLoginAttempt(phone) {
     const attemptsData = JSON.parse(localStorage.getItem(LOGIN_ATTEMPTS_KEY) || '{}');
-    
+
     if (!attemptsData[phone]) {
         attemptsData[phone] = { count: 0, firstAttemptAt: new Date().toISOString() };
     }
-    
+
     attemptsData[phone].count += 1;
     attemptsData[phone].lastAttemptAt = new Date().toISOString();
-    
+
     // Lock account if max attempts exceeded
     if (attemptsData[phone].count >= SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS) {
         const lockoutData = JSON.parse(localStorage.getItem(LOGIN_LOCKOUT_KEY) || '{}');
         lockoutData[phone] = { lockedAt: new Date().toISOString(), reason: 'too_many_attempts' };
         localStorage.setItem(LOGIN_LOCKOUT_KEY, JSON.stringify(lockoutData));
     }
-    
+
     localStorage.setItem(LOGIN_ATTEMPTS_KEY, JSON.stringify(attemptsData));
 }
 
@@ -94,7 +94,7 @@ function initializeSessionTracking(phone) {
         lastActivityTime: new Date().toISOString(),
         sessionToken: generateSessionToken()
     };
-    
+
     sessionStorage.setItem('titikrasa_session', JSON.stringify(sessionData));
     localStorage.setItem(SESSION_ACTIVITY_KEY, new Date().toISOString());
 }
@@ -116,19 +116,19 @@ function updateSessionActivity() {
  */
 function checkSessionTimeout() {
     const session = JSON.parse(sessionStorage.getItem('titikrasa_session') || '{}');
-    
+
     if (!session.phone) return false; // No active session
-    
+
     const lastActivity = new Date(session.lastActivityTime).getTime();
     const currentTime = new Date().getTime();
     const timeoutMs = SECURITY_CONFIG.SESSION_TIMEOUT_MINUTES * 60 * 1000;
-    
+
     if (currentTime - lastActivity > timeoutMs) {
         // Session expired - force logout
         handleSecureLogout('Session timeout due to inactivity');
         return true;
     }
-    
+
     return false;
 }
 
@@ -144,15 +144,15 @@ function generateSessionToken() {
  */
 function handleSecureLogout(reason = 'User initiated') {
     console.log('[SECURITY] Logout reason:', reason);
-    
+
     // Clear sensitive session data
     sessionStorage.clear();
-    
+
     // Clear current user from localStorage but keep user database
     const usersDb = JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || '{}');
     localStorage.clear();
     localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(usersDb));
-    
+
     // Redirect to login
     window.location.href = '../login/login.html';
 }
@@ -182,13 +182,13 @@ function isValidPhoneNumber(phone) {
  */
 function validatePasswordStrength(password) {
     const issues = [];
-    
+
     if (password.length < 6) issues.push('minimal 6 karakter');
     if (!/[0-9]/.test(password)) issues.push('minimal 1 angka');
     if (!/[a-z]/.test(password)) issues.push('minimal 1 huruf kecil');
     if (!/[A-Z]/.test(password)) issues.push('minimal 1 huruf besar');
     if (!/[!@#$%^&*]/.test(password)) issues.push('minimal 1 karakter spesial (!@#$%^&*)');
-    
+
     return {
         isStrong: issues.length === 0,
         issues: issues,
@@ -214,21 +214,21 @@ const MAX_AUDIT_ENTRIES = 100;
  */
 function logSecurityEvent(eventType, details = {}) {
     const auditLog = JSON.parse(localStorage.getItem(AUDIT_LOG_KEY) || '[]');
-    
+
     const logEntry = {
         timestamp: new Date().toISOString(),
         type: eventType,
         userAgent: navigator.userAgent.substring(0, 100),
         ...details
     };
-    
+
     auditLog.push(logEntry);
-    
+
     // Keep only last N entries to avoid storage bloat
     if (auditLog.length > MAX_AUDIT_ENTRIES) {
         auditLog.shift();
     }
-    
+
     localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(auditLog));
     console.log('[AUDIT]', eventType, details);
 }
@@ -248,7 +248,7 @@ function getAuditLog() {
 function exportUserData() {
     const user = getActiveUser();
     if (!user) return null;
-    
+
     const exportData = {
         exportedAt: new Date().toISOString(),
         user: {
@@ -258,7 +258,7 @@ function exportUserData() {
             registeredAt: user.registeredAt
         }
     };
-    
+
     logSecurityEvent('DATA_EXPORT', { phone: user.phone });
     return exportData;
 }
@@ -270,7 +270,7 @@ if (document.body) {
     document.addEventListener('mousemove', updateSessionActivity);
     document.addEventListener('keypress', updateSessionActivity);
     document.addEventListener('click', updateSessionActivity);
-    
+
     // Check session timeout periodically
     setInterval(() => {
         if (checkSessionTimeout()) {

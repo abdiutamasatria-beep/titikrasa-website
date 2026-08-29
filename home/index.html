@@ -18,12 +18,6 @@
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <script>
-        if (!localStorage.getItem('titikrasa_current_phone')) {
-            window.location.href = '../login/login.html';
-        }
-    </script>
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 
@@ -32,6 +26,22 @@
 </head>
 
 <body>
+    <!-- TABLE QR DINE-IN FLOATING WELCOME BAR (Auto-detected via ?meja=XX) -->
+    <div class="table-qr-banner" id="table-qr-banner" style="display: none;">
+        <div class="container table-qr-container">
+            <div class="tqr-left">
+                <span class="tqr-pulse-badge"><i data-lucide="qr-code"></i> SCAN MEJA AKTIF</span>
+                <span class="tqr-text">Selamat datang di Titik Rasa! Anda sedang memesan dari <strong
+                        id="table-qr-number">Meja No. 08</strong>.</span>
+            </div>
+            <div class="tqr-right">
+                <button type="button" class="btn-change-table" onclick="openTableSimulatorModal()">
+                    <i data-lucide="refresh-cw"></i> Ganti / Simulasi Meja
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- HERO HEADER (Header Logo + Nama Brand di tengah Background Makanan Khas) -->
     <header id="home" class="hero-header">
         <div class="hero-overlay"></div>
@@ -61,13 +71,13 @@
             <!-- Quick Highlight Pills -->
             <div class="hero-highlights">
                 <div class="highlight-item">
-                    <i data-lucide="sparkles"></i> 100% Halal & Autentik
+                    <i data-lucide="shield-check"></i> Dapur Halal & Non-Halal Terpisah
                 </div>
                 <div class="highlight-item">
                     <i data-lucide="clock"></i> Buka Setiap Hari (10:00 - 03:00)
                 </div>
                 <div class="highlight-item">
-                    <i data-lucide="star"></i> Rating 4.7/5 (1.500+ Ulasan)
+                    <i data-lucide="star"></i> Rating 4.9/5 (1.500+ Ulasan)
                 </div>
             </div>
         </div>
@@ -82,6 +92,11 @@
                     <strong>Buka Sekarang</strong> (10:00 - 03:00 WIB)
                 </span>
                 <span class="utility-divider">•</span>
+                <button type="button" class="btn-topbar-table" onclick="openTableSimulatorModal()"
+                    title="Simulasi Scan Meja">
+                    <i data-lucide="qr-code"></i> <span id="topbar-table-label">Scan Meja Dine-In</span>
+                </button>
+                <span class="utility-divider">•</span>
                 <span class="utility-location">
                     <i data-lucide="map-pin"></i> Jl. Karang Sari III
                 </span>
@@ -89,20 +104,30 @@
             <div class="utility-right">
                 <!-- Member Active Profile Pill in Top Bar -->
                 <div class="member-profile-pill is-hidden" id="member-profile-bar">
-                    <span class="user-greeting"><i data-lucide="user-check"></i> <strong
-                            id="bar-user-name">Satria Abdi Utama</strong> (<span id="bar-user-phone">085137756784</span>)</span>
+                    <span class="user-greeting"><i data-lucide="user-check"></i> <strong id="bar-user-name">Satria Abdi
+                            Utama</strong> (<span id="bar-user-phone">085137756784</span>)</span>
                     <span class="user-points-badge"><i data-lucide="gift"></i> <strong
                             id="bar-user-points">25.000</strong> Poin</span>
                     <button class="btn-logout-mini" onclick="handleLogout()" title="Keluar / Ganti Nomor">
                         <i data-lucide="log-out"></i> Ganti Akun
                     </button>
                 </div>
+
+                <!-- Guest Profile Pill in Top Bar -->
+                <div class="guest-profile-pill" id="guest-profile-bar">
+                    <a href="../login/login.html" class="btn-guest-topbar">
+                        <i data-lucide="user-plus"></i>
+                        <span>Masuk / Daftar</span>
+                        <span class="topbar-bonus-badge">+25K Poin</span>
+                    </a>
+                </div>
+
                 <a href="https://wa.me/6285137756784?text=Halo%20Titik%20Rasa,%20saya%20ingin%20info%20reservasi"
                     target="_blank" rel="noopener" class="utility-link">
                     <i data-lucide="message-circle"></i> WhatsApp Hotline
                 </a>
                 <span class="utility-divider">•</span>
-                <span class="utility-badge">100% Halal Certified</span>
+                <span class="utility-badge"><i data-lucide="shield-check"></i> 2 Dapur Terpisah 100% Higienis</span>
             </div>
         </div>
     </div>
@@ -215,238 +240,101 @@
             <div class="section-header text-center">
                 <span class="section-badge">MENU PILIHAN</span>
                 <h2 class="section-title">Hidangan Khas Nusantara</h2>
-                <p class="section-subtitle">Setiap porsi diolah dari rempah murni pilihan. Pilih menu kesukaan Anda dan
-                    pesan langsung secara praktis melalui WhatsApp!</p>
+                <p class="section-subtitle">Setiap porsi diolah dari rempah murni warisan Nusantara. Tambahkan menu
+                    favorit Anda ke keranjang dan pesan langsung secara terpadu melalui WhatsApp!</p>
             </div>
 
-            <!-- Filter Categories -->
-            <div class="menu-categories">
-                <button class="category-btn active" data-category="all">
-                    <i data-lucide="layout-grid"></i> Semua Menu
-                </button>
-                <button class="category-btn" data-category="utama">
-                    <i data-lucide="soup"></i> Makanan Utama
-                </button>
-                <button class="category-btn" data-category="minuman">
-                    <i data-lucide="cup-soda"></i> Minuman Khas
-                </button>
+            <!-- Dual Kitchen Transparency Assurance Banner -->
+            <div class="dual-kitchen-banner">
+                <div class="dk-badge-icon">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <div class="dk-text-content">
+                    <h3 class="dk-title">Jaminan Standar Kuliner: 2 Dapur Terpisah 100% Higienis</h3>
+                    <p class="dk-desc">Demi ketenangan, keyakinan, dan kenyamanan seluruh pelanggan, hidangan
+                        <strong>Halal</strong> dan <strong>Non-Halal</strong> kami olah di <strong>2 Dapur yang
+                            sepenuhnya terpisah</strong> dengan wajan, pisau, perlengkapan masak, alat saji, dan area
+                        preparasi mandiri.
+                    </p>
+                </div>
+                <div class="dk-pills">
+                    <span class="dk-pill halal"><i data-lucide="check-circle-2"></i> Dapur Khusus Halal</span>
+                    <span class="dk-pill nonhalal"><i data-lucide="flame"></i> Dapur Khusus Non-Halal</span>
+                </div>
             </div>
 
-            <!-- Menu Cards Grid -->
+            <!-- Interactive Live Search & Filter Bar -->
+            <div class="menu-search-toolbar">
+                <div class="search-input-wrapper">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="menu-search-input"
+                        placeholder="Cari menu favorit... (cth: Rendang, Pedas, Kopi, Durian, Nasi)"
+                        oninput="handleLiveSearch(event)" autocomplete="off">
+                    <button type="button" class="search-clear-btn" id="search-clear-btn" onclick="clearSearchInput()"
+                        style="display: none;" title="Hapus pencarian">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="search-counter" id="menu-search-count">19 menu tersedia</div>
+            </div>
+
+            <!-- Filter Multi-Controls (Categories, Price, Spice) -->
+            <div class="filter-controls-group">
+                <!-- Primary Filter Categories -->
+                <div class="menu-categories">
+                    <button class="category-btn active" data-category="all">
+                        <i data-lucide="layout-grid"></i> Semua Menu
+                    </button>
+                    <button class="category-btn" data-category="halal">
+                        <i data-lucide="leaf"></i> Hidangan Halal
+                    </button>
+                    <button class="category-btn" data-category="nonhalal">
+                        <i data-lucide="flame"></i> Hidangan Non-Halal
+                    </button>
+                    <button class="category-btn" data-category="utama">
+                        <i data-lucide="soup"></i> Makanan Utama
+                    </button>
+                    <button class="category-btn" data-category="minuman">
+                        <i data-lucide="cup-soda"></i> Minuman Segar
+                    </button>
+                </div>
+
+                <!-- Secondary Quick Filters & Spice Tip -->
+                <div class="secondary-filters-row">
+                    <div class="filter-chip-group">
+                        <span class="filter-group-label"><i data-lucide="tag"></i> Rentang Harga:</span>
+                        <button type="button" class="price-filter-btn active" data-price-range="all"
+                            onclick="filterPriceRange('all')">Semua Harga</button>
+                        <button type="button" class="price-filter-btn" data-price-range="under25"
+                            onclick="filterPriceRange('under25')">&lt; Rp 25rb</button>
+                        <button type="button" class="price-filter-btn" data-price-range="25to35"
+                            onclick="filterPriceRange('25to35')">Rp 25rb - 35rb</button>
+                        <button type="button" class="price-filter-btn" data-price-range="above35"
+                            onclick="filterPriceRange('above35')">&gt; Rp 35rb</button>
+                    </div>
+
+                    <div class="menu-spice-tip">
+                        <i data-lucide="flame"></i>
+                        <span>Pilihan <strong>Level Pedas 0 s/d 5</strong> bisa Anda tentukan langsung saat
+                            memesan!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Menu Cards Grid (Rendered via script.js) -->
             <div class="menu-grid" id="menu-grid">
+                <!-- Javascript will dynamically inject rich cards here -->
+            </div>
 
-                <!-- Menu Item 1 -->
-                <div class="menu-card" data-category="utama">
-                    <div class="card-image-wrap">
-                        <img src="https://img.freepik.com/premium-photo/rendang-daging-beef-rendang-chicken-rendang-traditional-dish-usually-served-during-eid-festival-normal-day_781325-4223.jpg?w=2000"
-                            alt="Rendang Daging Sapi Titik Rasa" class="card-img">
-                        <span class="card-badge bestseller">BEST SELLER</span>
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 5.0
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Rendang Sapi Warisan</h3>
-                        <p class="food-desc">Daging sapi bagian pilihan yang dimasak perlahan 8 jam dengan santan kental
-                            & 16 macam bumbu rempah autentik Padang.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">38.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Rendang Sapi Warisan', 38000, 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Item 2 -->
-                <div class="menu-card" data-category="utama">
-                    <div class="card-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1626804475297-4160820ceaeb?auto=format&fit=crop&w=800&q=80"
-                            alt="Ayam Betutu Bali Titik Rasa" class="card-img">
-                        <span class="card-badge recommended">REKOMENDASI CHEF</span>
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 4.9
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Ayam Betutu Rempah Bali</h3>
-                        <p class="food-desc">Ayam kampung empuk dibalut bumbu base genep khas Bali, disajikan lengkap
-                            dengan plecing kangkung & sambal matah segar.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">35.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Ayam Betutu Rempah Bali', 35000, 'https://images.unsplash.com/photo-1626804475297-4160820ceaeb?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Item 3 -->
-                <div class="menu-card" data-category="utama">
-                    <div class="card-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1596560548464-f010549b84d7?auto=format&fit=crop&w=800&q=80"
-                            alt="Nasi Campur Spesial Titik Rasa" class="card-img">
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 4.8
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Nasi Campur Spesial Nusantara</h3>
-                        <p class="food-desc">Nasi gurih wangi dengan gabungan empal suwir, telur balado, urap sayur,
-                            tempe bacem, serundeng, & sambal bajak.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">28.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Nasi Campur Spesial Nusantara', 28000, 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Item 4 -->
-                <div class="menu-card" data-category="utama">
-                    <div class="card-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=800&q=80"
-                            alt="Sate Maranggi Purwakarta Titik Rasa" class="card-img">
-                        <span class="card-badge bestseller">FAVORIT</span>
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 4.9
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Sate Maranggi Sapi Daging Empuk</h3>
-                        <p class="food-desc">10 tusuk sate sapi dibakar arang kelapa dengan marinasi ketumbar manis,
-                            disajikan bersama sambal kecap dabu-dabu segar.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">32.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Sate Maranggi Sapi Daging Empuk', 32000, 'https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Item 5 -->
-                <div class="menu-card" data-category="camilan">
-                    <div class="card-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80"
-                            alt="Bakwan Jagung Renyah" class="card-img">
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 4.8
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Bakwan Jagung Manis Renyah</h3>
-                        <p class="food-desc">Jagung manis berserat tebal digoreng emas dengan adonan bumbu ketumbar &
-                            daun jeruk. Isi 4 pcs per porsi.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">15.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Bakwan Jagung Manis Renyah', 15000, 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Item 6 -->
-                <div class="menu-card" data-category="camilan">
-                    <div class="card-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80"
-                            alt="Tahu Kipas Udang Cocolan" class="card-img">
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 4.7
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Tahu Kipas Isian Udang & Sayur</h3>
-                        <p class="food-desc">Tahu pong padat diisi adonan udang cincang & wortel manis, digoreng garing
-                            dengan petis cocolan istimewa.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">18.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Tahu Kipas Isian Udang & Sayur', 18000, 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Item 7 -->
-                <div class="menu-card" data-category="minuman">
-                    <div class="card-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80"
-                            alt="Es Teler Titik Rasa" class="card-img">
-                        <span class="card-badge bestseller">SEGARKAN HATI</span>
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 4.9
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Es Teler Durian Santan Melimpah</h3>
-                        <p class="food-desc">Kombinasi nangka wangi, alpukat mentega, kelapa muda, topping daging durian
-                            asli & sirup gula aren lezat.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">20.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Es Teler Durian Santan Melimpah', 20000, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Item 8 -->
-                <div class="menu-card" data-category="minuman">
-                    <div class="card-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80"
-                            alt="Wedang Ronde Hangat" class="card-img">
-                        <div class="card-rating">
-                            <i data-lucide="star" fill="currentColor"></i> 4.8
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="food-title">Wedang Ronde Jahe Merah</h3>
-                        <p class="food-desc">Seduhan jahe merah bakar hangat dengan ronde isi kacang tumbuk,
-                            kolang-kaling, & potongan roti tawar.</p>
-                        <div class="card-footer">
-                            <div class="price-wrap">
-                                <span class="price-currency">Rp</span>
-                                <span class="price-amount">16.000</span>
-                            </div>
-                            <button class="btn btn-order"
-                                onclick="openOrderModal('Wedang Ronde Jahe Merah', 16000, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80')">
-                                <i data-lucide="shopping-bag"></i> Pesan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Empty Search State -->
+            <div class="menu-empty-search" id="menu-empty-search" style="display: none;">
+                <div class="empty-search-icon"><i data-lucide="search-x"></i></div>
+                <h3>Menu Tidak Ditemukan</h3>
+                <p>Coba kata kunci lain atau reset filter untuk melihat seluruh hidangan kami.</p>
+                <button type="button" class="btn btn-outline-gold"
+                    onclick="clearSearchInput(); filterMenuCategory('all'); filterPriceRange('all'); filterSpiceLevel('all');">
+                    <i data-lucide="rotate-ccw"></i> Reset Semua Filter
+                </button>
             </div>
         </div>
     </section>
@@ -773,8 +661,8 @@
             <div class="points-dashboard-card">
                 <div class="dashboard-left">
                     <div class="tier-badge">
-                        <i data-lucide="award"></i> MEMBER: <strong id="dash-user-name">Satria Abdi Utama</strong> (<span
-                            id="dash-user-phone">085137756784</span>)
+                        <i data-lucide="award"></i> MEMBER: <strong id="dash-user-name">Satria Abdi Utama</strong>
+                        (<span id="dash-user-phone">085137756784</span>)
                     </div>
                     <div class="points-balance-display">
                         <span class="balance-label">Saldo Titik Poin Anda:</span>
@@ -789,6 +677,16 @@
                 </div>
 
                 <div class="dashboard-right">
+                    <div class="guest-poin-alert" id="dash-guest-banner" style="display: none;">
+                        <i data-lucide="sparkles"></i>
+                        <div>
+                            <strong>Anda Dalam Mode Tamu!</strong>
+                            <p><a href="../login/login.html">Masuk atau Daftar Akun</a> untuk langsung mendapatkan
+                                <strong>25.000 Titik Poin</strong> selamat datang & tukarkan dengan voucher makan
+                                gratis!
+                            </p>
+                        </div>
+                    </div>
                     <h4><i data-lucide="phone"></i> Cek / Sinkronkan Poin Member</h4>
                     <p>Masukkan No. WhatsApp yang terdaftar saat memesan untuk mengecek saldo poin Anda.</p>
                     <div class="phone-check-form">
@@ -1076,24 +974,21 @@
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="../assets/gallery/tim.jpg"
-                        alt="Tim Master Chef di Dapur" class="gallery-img">
+                    <img src="../assets/gallery/tim.jpg" alt="Tim Master Chef di Dapur" class="gallery-img">
                     <div class="gallery-overlay">
                         <span class="gallery-tag">Tim & Behind The Scenes</span>
                         <h4>Tim Chef Racik Rempah Segar</h4>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="../assets/gallery/outdoor.jpg"
-                        alt="Area Outdoor Saung Lesehan" class="gallery-img">
+                    <img src="../assets/gallery/outdoor.jpg" alt="Area Outdoor Saung Lesehan" class="gallery-img">
                     <div class="gallery-overlay">
                         <span class="gallery-tag">Outdoor Garden</span>
                         <h4>Saung Lesehan Asri</h4>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="../assets/gallery/pengunjung.jpg"
-                        alt="Foto Momen Pengunjung Resto" class="gallery-img">
+                    <img src="../assets/gallery/pengunjung.jpg" alt="Foto Momen Pengunjung Resto" class="gallery-img">
                     <div class="gallery-overlay">
                         <span class="gallery-tag">Foto Pengunjung</span>
                         <h4>Momen Bersama Keluarga</h4>
@@ -1101,67 +996,21 @@
                 </div>
             </div>
 
-            <!-- Customer Reviews Slider / Testimonial Grid -->
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="user-info">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
-                            alt="Rina Kusuma" class="user-avatar">
-                        <div>
-                            <h4>Rina Kusuma</h4>
-                            <div class="user-rating">
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="review-text">"Rendang daging sapinya benar-benar empuk banget! Bumbunya meresap sampai ke
-                        serat terdalam. Suasana tempatnya sangat cocok buat makan bareng keluarga besar."</p>
-                    <span class="review-date">Google Review • 2 hari lalu</span>
+            <!-- Customer Reviews Header & Write Review Action -->
+            <div class="reviews-action-header">
+                <div class="rah-text">
+                    <h3 class="rah-title"><i data-lucide="message-square-quote"></i> Ulasan & Kesan Pelanggan</h3>
+                    <p class="rah-sub">Ceritakan pengalaman kuliner Anda dan dapatkan <strong>+500 Titik Poin</strong>
+                        langsung!</p>
                 </div>
+                <button type="button" class="btn btn-primary btn-glow" onclick="openReviewModal()">
+                    <i data-lucide="star"></i> Tulis Ulasan (+500 Poin)
+                </button>
+            </div>
 
-                <div class="testimonial-card">
-                    <div class="user-info">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
-                            alt="Budi Santoso" class="user-avatar">
-                        <div>
-                            <h4>Budi Santoso</h4>
-                            <div class="user-rating">
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="review-text">"Pesan lewat WhatsApp responnya cepat banget. Ayam betutunya mantap pedas
-                        gurihnya pas. Tempatnya bersih, parkiran luas, dan pelayanan sangat ramah!"</p>
-                    <span class="review-date">Google Review • 1 minggu lalu</span>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="user-info">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80"
-                            alt="Dewi Lestari" class="user-avatar">
-                        <div>
-                            <h4>Dewi Lestari</h4>
-                            <div class="user-rating">
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                                <i data-lucide="star" fill="currentColor"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="review-text">"Es Teler duriannya segar tiada tanding! Lokasinya gampang dicari dan ruang
-                        VIP room-nya nyaman banget buat rapat kantor santai."</p>
-                    <span class="review-date">Google Review • 3 minggu lalu</span>
-                </div>
+            <!-- Dynamic Customer Reviews Grid (Rendered via script.js) -->
+            <div class="reviews-modern-grid" id="reviews-container">
+                <!-- Javascript will dynamically inject customer review cards here -->
             </div>
         </div>
     </section>
@@ -1170,21 +1019,22 @@
     <section id="kontak" class="section-padding kontak-section">
         <div class="container">
             <div class="section-header text-center">
-                <span class="section-badge">KONTAK & LOKASI</span>
-                <h2 class="section-title">Kunjungi Titik Rasa</h2>
-                <p class="section-subtitle">Nikmati hidangan hangat di lokasi kami atau hubungi WhatsApp resmi kami
-                    untuk reservasi meja dan layanan pelanggan yang lebih cepat.</p>
+                <span class="section-badge">KONTAK & RESERVASI</span>
+                <h2 class="section-title">Kunjungi & Reservasi Meja di Titik Rasa</h2>
+                <p class="section-subtitle">Nikmati hidangan hangat di tempat atau amankan meja favorit Anda untuk acara
+                    keluarga, reuni, dan jamuan bisnis.</p>
             </div>
 
             <div class="kontak-grid">
-                <!-- Info Cards -->
+                <!-- Info & Map Column -->
                 <div class="kontak-info-column">
                     <div class="info-item-card">
                         <div class="info-icon"><i data-lucide="map-pin"></i></div>
                         <div>
                             <h3>Alamat Lengkap</h3>
                             <p>Jl. Tibung Sari No 1X, Dalung, Kec. Kuta Utara, Kabupaten Badung, Bali 80361</p>
-                            <span class="address-note">(Lokasi strategis di kawasan Dalung, mudah dijangkau untuk keluarga dan rombongan)</span>
+                            <span class="address-note">(Lokasi asri & strategis di kawasan Dalung, parkir mobil & motor
+                                luas)</span>
                         </div>
                     </div>
 
@@ -1201,14 +1051,24 @@
                         <div class="info-icon"><i data-lucide="clock"></i></div>
                         <div>
                             <h3>Jam Operasional</h3>
-                            <p>Senin - Minggu: 10:00 - 22:00 WIB</p>
+                            <p>Senin - Minggu: 10:00 - 03:00 WIB (Buka Dini Hari)</p>
                         </div>
                     </div>
 
-                    <!-- Interactive Google Map Frame -->
+                    <!-- Interactive Google Map Frame with Direct Navigation -->
                     <div class="google-map-box">
                         <div class="map-header">
-                            <i data-lucide="map"></i> Peta Lokasi Google Maps
+                            <span><i data-lucide="map"></i> Peta Lokasi Google Maps</span>
+                            <div class="map-nav-links">
+                                <a href="https://maps.google.com/?q=SMK+TI+Bali+Global+Badung" target="_blank"
+                                    rel="noopener" class="map-link-btn" title="Buka di Google Maps">
+                                    <i data-lucide="navigation"></i> Google Maps
+                                </a>
+                                <a href="https://waze.com/ul?q=SMK+TI+Bali+Global+Badung" target="_blank" rel="noopener"
+                                    class="map-link-btn" title="Buka di Waze">
+                                    <i data-lucide="compass"></i> Waze
+                                </a>
+                            </div>
                         </div>
                         <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.6826015168995!2d115.17904047430414!3d-8.626438387677476!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd238b443f3470b%3A0xed54cf03e1904bf3!2sSMK%20TI%20Bali%20Global%20Badung!5e0!3m2!1sid!2sid!4v1787714009031!5m2!1sid!2sid"
@@ -1216,43 +1076,99 @@
                             allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
                         </iframe>
                     </div>
+
+                    <!-- Delivery Partner Aggregator Badges -->
+                    <div class="delivery-partners-box">
+                        <span class="dp-title"><i data-lucide="bike"></i> Pesan Antar via Partner Resmi:</span>
+                        <div class="dp-buttons-row">
+                            <a href="https://gofood.co.id" target="_blank" rel="noopener"
+                                class="btn-delivery-app gofood">
+                                <span class="dp-dot gofood-dot"></span> GoFood
+                            </a>
+                            <a href="https://food.grab.com" target="_blank" rel="noopener"
+                                class="btn-delivery-app grabfood">
+                                <span class="dp-dot grab-dot"></span> GrabFood
+                            </a>
+                            <a href="https://shopee.co.id/shopeefood" target="_blank" rel="noopener"
+                                class="btn-delivery-app shopeefood">
+                                <span class="dp-dot shopee-dot"></span> ShopeeFood
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Form Pesan Cepat / Reservasi -->
+                <!-- Form Reservasi Meja Interaktif -->
                 <div class="kontak-form-column">
-                    <form class="contact-form-wrapper" id="contactForm" onsubmit="handleFormSubmit(event)">
-                        <h3>Reservasi Meja / Pertanyaan</h3>
-                        <p>Isi formulir di bawah ini untuk pemesanan meja rombongan atau layanan catering.</p>
+                    <form class="contact-form-wrapper" id="contactForm" onsubmit="handleReservationSubmit(event)">
+                        <div class="res-form-head">
+                            <div class="res-badge"><i data-lucide="calendar-check"></i> DIGITAL BOOKING PASS</div>
+                            <h3>Reservasi Meja Interaktif</h3>
+                            <p>Amankan tempat duduk pilihan Anda. E-Tiket Digital Reservasi akan langsung diterbitkan
+                                setelah pengisian.</p>
+                        </div>
 
                         <div class="form-group">
-                            <label for="form-name">Nama Lengkap</label>
-                            <input type="text" id="form-name" required placeholder="Contoh: Budi Prasetyo">
+                            <label for="res-name"><i data-lucide="user"></i> Nama Lengkap Pemesan</label>
+                            <input type="text" id="res-name" required placeholder="Contoh: Budi Prasetyo"
+                                autocomplete="name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="res-phone"><i data-lucide="phone"></i> Nomor WhatsApp Aktif</label>
+                            <input type="tel" id="res-phone" required placeholder="Contoh: 081234567890"
+                                autocomplete="tel">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="form-phone">Nomor WhatsApp</label>
-                                <input type="tel" id="form-phone" required placeholder="0812xxxxxxx">
+                                <label for="res-area"><i data-lucide="sofa"></i> Pilihan Area Tempat</label>
+                                <select id="res-area" class="cart-select" required>
+                                    <option value="Outdoor Garden (Taman Asri)">🌿 Outdoor Garden (Taman Asri)</option>
+                                    <option value="Indoor AC (Modern Heritage)" selected>❄️ Indoor AC (Modern Heritage)
+                                    </option>
+                                    <option value="Saung Lesehan Tradisional">🛖 Saung Lesehan Tradisional</option>
+                                    <option value="Private VIP Room (Keluarga/Rapat)">👑 Private VIP Room
+                                        (Keluarga/Rapat)</option>
+                                </select>
                             </div>
                             <div class="form-group">
-                                <label for="form-people">Jumlah Orang</label>
-                                <select id="form-people">
-                                    <option value="1-2">1 - 2 Orang</option>
-                                    <option value="3-5" selected>3 - 5 Orang</option>
-                                    <option value="6-10">6 - 10 Orang (Rombongan)</option>
-                                    <option value="10+">Lebih dari 10 Orang (VIP Event)</option>
+                                <label for="res-guests"><i data-lucide="users"></i> Jumlah Tamu</label>
+                                <select id="res-guests" class="cart-select">
+                                    <option value="1 - 2">1 - 2 Orang</option>
+                                    <option value="3 - 4" selected>3 - 4 Orang</option>
+                                    <option value="5 - 8">5 - 8 Orang</option>
+                                    <option value="9 - 15">9 - 15 Orang (Rombongan)</option>
+                                    <option value="16+">16+ Orang (VIP Event)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="res-date"><i data-lucide="calendar"></i> Tanggal Kedatangan</label>
+                                <input type="date" id="res-date" required class="cart-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="res-time"><i data-lucide="clock"></i> Slot Waktu</label>
+                                <select id="res-time" class="cart-select" required>
+                                    <option value="12:00">☀️ Lunch (12:00 WIB)</option>
+                                    <option value="14:00">☕ Afternoon Tea (14:00 WIB)</option>
+                                    <option value="17:00">🌇 Sunset Senja (17:00 WIB)</option>
+                                    <option value="19:30" selected>🌙 Dinner Utama (19:30 WIB)</option>
+                                    <option value="21:30">✨ Late Night (21:30 WIB)</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="form-message">Catatan / Pesan Khusus</label>
-                            <textarea id="form-message" rows="3"
-                                placeholder="Tuliskan tanggal kedatangan atau permintaan khusus..."></textarea>
+                            <label for="res-notes"><i data-lucide="edit-3"></i> Catatan Khusus / Permintaan Meja
+                                (Opsional)</label>
+                            <textarea id="res-notes" rows="2"
+                                placeholder="Cth: Meja dekat taman bunga, rayakan ulang tahun, bawa kursi bayi..."></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i data-lucide="send"></i> Kirim Pesan Reservasi
+                        <button type="submit" class="btn btn-primary btn-block btn-glow btn-submit-res">
+                            <i data-lucide="ticket"></i> Terbitkan Digital Booking Pass & Reservasi
                         </button>
                     </form>
                 </div>
@@ -1260,7 +1176,7 @@
         </div>
     </section>
     <div class="pringatan">
-     <span>⚠️Masih dalam pengembangan</span>
+        <span>⚠️Masih dalam pengembangan</span>
     </div>
 
 
@@ -1330,82 +1246,524 @@
         </div>
     </footer>
 
-    <!-- MODAL PEMESANAN DIRECT WHATSAPP -->
-    <div class="modal-overlay" id="orderModal" role="dialog" aria-modal="true">
-        <div class="modal-card">
-            <button class="modal-close" onclick="closeOrderModal()">&times;</button>
-            <div class="modal-header">
-                <img id="modal-food-img" src="" alt="Food Preview" class="modal-food-thumb">
+    <!-- FLOATING CART DOCK (Bottom Right Quick Access) -->
+    <div class="floating-cart-dock" id="floating-cart-dock" onclick="openCartDrawer()" role="button"
+        aria-label="Buka Keranjang Pesanan">
+        <div class="cart-icon-bubble">
+            <i data-lucide="shopping-bag"></i>
+            <span class="cart-count-badge" id="cart-count-badge">0</span>
+        </div>
+        <div class="cart-dock-info">
+            <span class="cart-dock-label">Keranjang Anda</span>
+            <strong class="cart-dock-total" id="cart-dock-total">Rp 0</strong>
+        </div>
+        <div class="cart-dock-arrow">
+            <span>Buka</span>
+            <i data-lucide="chevron-right"></i>
+        </div>
+    </div>
+
+    <!-- CART DRAWER & BACKDROP -->
+    <div class="cart-drawer-backdrop" id="cart-drawer-backdrop" onclick="closeCartDrawer()"></div>
+    <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-label="Keranjang Pesanan">
+        <div class="cart-drawer-header">
+            <div class="cart-header-title">
+                <div class="cart-header-icon"><i data-lucide="shopping-bag"></i></div>
                 <div>
-                    <span class="modal-tag">Pesan Langsung (Direct Order)</span>
-                    <h3 id="modal-food-name">Nama Makanan</h3>
-                    <div class="modal-food-price" id="modal-food-price">Rp 0</div>
+                    <h3>Keranjang Pesanan</h3>
+                    <span id="cart-drawer-count">0 menu dipilih</span>
                 </div>
             </div>
+            <div class="cart-header-actions">
+                <button class="btn-clear-cart" onclick="clearCart()" title="Kosongkan Keranjang">
+                    <i data-lucide="trash-2"></i>
+                </button>
+                <button class="cart-drawer-close" onclick="closeCartDrawer()"
+                    aria-label="Tutup Keranjang">&times;</button>
+            </div>
+        </div>
+
+        <div class="cart-hygiene-bar">
+            <i data-lucide="shield-check"></i>
+            <span>Dua Dapur Terpisah: Halal & Non-Halal 100% Higienis</span>
+        </div>
+
+        <div class="cart-drawer-body" id="cart-drawer-body">
+            <!-- Items rendered dynamically via JS -->
+        </div>
+
+        <div class="cart-drawer-footer" id="cart-drawer-footer">
+            <!-- Customer Details -->
+            <div class="cart-section-box">
+                <label class="cart-section-label"><i data-lucide="user"></i> Data Pemesan</label>
+                <div class="cart-guest-hint" id="cart-guest-login-hint">
+                    <span>💡 Memiliki akun member? <a href="../login/login.html">Masuk di sini</a> untuk pakai Titik
+                        Poin.</span>
+                </div>
+                <div class="cart-form-row">
+                    <input type="text" id="cart-customer-name" class="cart-input" placeholder="Nama Lengkap / Panggilan"
+                        required>
+                    <input type="tel" id="cart-customer-phone" class="cart-input" placeholder="No. WhatsApp Aktif"
+                        required>
+                </div>
+            </div>
+
+            <!-- Order Type & Location -->
+            <div class="cart-section-box">
+                <label class="cart-section-label" for="cart-order-type"><i data-lucide="map-pin"></i> Tipe Pesanan &
+                    Lokasi</label>
+                <select id="cart-order-type" class="cart-select">
+                    <option value="Makan di Tempat (Dine In)">🍽️ Makan di Tempat (Dine In)</option>
+                    <option value="Bawa Pulang (Takeaway)">🛍️ Bawa Pulang (Takeaway)</option>
+                    <option value="Kirim Antar (Delivery)">🛵 Kirim Antar (Delivery)</option>
+                </select>
+                <input type="text" id="cart-location-input" class="cart-input mt-2"
+                    placeholder="Nomor Meja (Dine In) / Alamat Kirim (Delivery)">
+            </div>
+
+            <!-- Payment Method & QRIS -->
+            <div class="cart-section-box">
+                <label class="cart-section-label" for="cart-payment-method"><i data-lucide="credit-card"></i> Metode
+                    Pembayaran</label>
+                <select id="cart-payment-method" class="cart-select">
+                    <option value="QRIS Instan (BCA / GoPay / OVO / Dana / ShopeePay)" selected>📱 QRIS Instan (BCA /
+                        GoPay / OVO / Dana / ShopeePay)</option>
+                    <option value="Transfer Bank BCA (882-990-1234)">🏦 Transfer Bank BCA</option>
+                    <option value="Transfer Bank Mandiri (145-00-987654-3)">🏛️ Transfer Bank Mandiri</option>
+                    <option value="Bayar di Kasir (Tunai / Debit / Kartu)">💵 Bayar di Kasir (Tunai / Kartu)</option>
+                </select>
+                <button type="button" class="btn btn-outline-qris btn-block mt-2" onclick="openQrisModal()">
+                    <i data-lucide="qr-code"></i> Lihat Barcode QRIS & Rekening Resmi
+                </button>
+            </div>
+
+            <!-- Notes -->
+            <div class="cart-section-box">
+                <label class="cart-section-label" for="cart-general-notes"><i data-lucide="message-square"></i> Catatan
+                    Tambahan (Opsional)</label>
+                <input type="text" id="cart-general-notes" class="cart-input"
+                    placeholder="Cth: Sendok garpu dipisah, sambal banyak...">
+            </div>
+
+            <!-- Voucher Section -->
+            <div class="cart-section-box cart-voucher-box">
+                <label class="cart-section-label" for="cart-voucher-input"><i data-lucide="tag"></i> Voucher Diskon
+                    Titik Poin</label>
+                <div class="cart-voucher-input-group">
+                    <input type="text" id="cart-voucher-input" placeholder="Kode: TITIK10K, TITIK20K, SULTAN30K">
+                    <button type="button" class="btn btn-apply-voucher" onclick="applyVoucherInCart()">Gunakan</button>
+                </div>
+                <div id="cart-voucher-status" class="cart-voucher-status" style="display: none;"></div>
+            </div>
+
+            <!-- Calculations -->
+            <div class="cart-calculation-summary">
+                <div class="cart-summary-line">
+                    <span>Subtotal Menu:</span>
+                    <strong id="cart-summary-subtotal">Rp 0</strong>
+                </div>
+                <div class="cart-summary-line discount-line" id="cart-discount-row" style="display: none;">
+                    <span><i data-lucide="percent"></i> Potongan Voucher:</span>
+                    <strong id="cart-summary-discount">- Rp 0</strong>
+                </div>
+                <div class="cart-summary-line total-line">
+                    <span>Total Pembayaran:</span>
+                    <strong class="cart-total-amount" id="cart-summary-total">Rp 0</strong>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="cart-action-buttons">
+                <button type="button" class="btn btn-whatsapp btn-block btn-cart-checkout"
+                    onclick="sendWhatsAppCartOrder()">
+                    <i data-lucide="message-circle"></i> Kirim Pesanan via WhatsApp
+                </button>
+                <button type="button" class="btn btn-outline-gold btn-block" onclick="closeCartDrawer()">
+                    <i data-lucide="plus"></i> Tambah Menu Lainnya
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MODAL PILIH VARIAN & LEVEL PEDAS (0 - 5) -->
+    <div class="modal-overlay" id="variantModal" role="dialog" aria-modal="true"
+        aria-label="Pilih Level Pedas & Varian Menu">
+        <div class="modal-card food-order-modal-card">
+            <button class="modal-close" onclick="closeVariantModal()" aria-label="Tutup">&times;</button>
+
+            <div class="modal-header">
+                <div class="modal-thumb-box">
+                    <img id="var-modal-img" src="" alt="Thumbnail" class="modal-food-thumb"
+                        onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'">
+                </div>
+                <div class="modal-food-info">
+                    <div class="modal-badge-row">
+                        <span class="dietary-badge badge-halal" id="var-modal-dietary"><i data-lucide="check"></i> 100%
+                            HALAL</span>
+                    </div>
+                    <h3 id="var-modal-title">Nama Makanan</h3>
+                    <p id="var-modal-desc" class="modal-food-sub">Deskripsi hidangan autentik Nusantara...</p>
+                    <div class="modal-food-price" id="var-modal-price">Rp 0</div>
+                </div>
+            </div>
+
             <div class="modal-body">
-                <div class="form-group">
-                    <label>Jumlah Porsi / Paket:</label>
-                    <div class="quantity-control">
-                        <button class="qty-btn" onclick="updateQty(-1)">-</button>
-                        <span class="qty-value" id="qty-val">1</span>
-                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                <!-- Spice Level Selector (Level 0 - 5) -->
+                <div class="modal-section-box" id="var-spice-group">
+                    <div class="modal-section-head">
+                        <label class="form-section-title"><i data-lucide="flame"></i> Pilih Tingkat Kepedasan:</label>
+                        <span class="modal-section-hint">Level 0 s/d 5</span>
+                    </div>
+                    <input type="hidden" id="var-selected-spice" value="1">
+                    <div class="spice-levels-grid">
+                        <button type="button" class="spice-opt-btn" data-level="0" onclick="selectModalSpiceLevel(0)">
+                            <span class="spice-opt-icon">🚫</span>
+                            <div class="spice-opt-text">
+                                <strong>Level 0</strong>
+                                <small>Tidak Pedas (Manis/Gurih)</small>
+                            </div>
+                        </button>
+                        <button type="button" class="spice-opt-btn active" data-level="1"
+                            onclick="selectModalSpiceLevel(1)">
+                            <span class="spice-opt-icon">🌶️</span>
+                            <div class="spice-opt-text">
+                                <strong>Level 1</strong>
+                                <small>Pedas Ringan</small>
+                            </div>
+                        </button>
+                        <button type="button" class="spice-opt-btn" data-level="2" onclick="selectModalSpiceLevel(2)">
+                            <span class="spice-opt-icon">🌶️🌶️</span>
+                            <div class="spice-opt-text">
+                                <strong>Level 2</strong>
+                                <small>Pedas Sedang (Standar)</small>
+                            </div>
+                        </button>
+                        <button type="button" class="spice-opt-btn" data-level="3" onclick="selectModalSpiceLevel(3)">
+                            <span class="spice-opt-icon">🌶️🌶️🌶️</span>
+                            <div class="spice-opt-text">
+                                <strong>Level 3</strong>
+                                <small>Pedas Mantap Gurih</small>
+                            </div>
+                        </button>
+                        <button type="button" class="spice-opt-btn" data-level="4" onclick="selectModalSpiceLevel(4)">
+                            <span class="spice-opt-icon">🔥</span>
+                            <div class="spice-opt-text">
+                                <strong>Level 4</strong>
+                                <small>Ekstra Pedas Nampol</small>
+                            </div>
+                        </button>
+                        <button type="button" class="spice-opt-btn" data-level="5" onclick="selectModalSpiceLevel(5)">
+                            <span class="spice-opt-icon">💥</span>
+                            <div class="spice-opt-text">
+                                <strong>Level 5</strong>
+                                <small>Pedas Mampus (Sultan)</small>
+                            </div>
+                        </button>
                     </div>
                 </div>
 
-                <div class="form-group is-hidden" id="order-variant-group">
-                    <label for="order-variant">Pilih Varian:</label>
-                    <select id="order-variant"></select>
+                <!-- Variant / Topping Selection (Conditional) -->
+                <div class="modal-section-box" id="var-variant-group" style="display: none;">
+                    <label for="var-modal-select" class="form-section-title"><i data-lucide="list"></i> Pilihan Varian /
+                        Topping:</label>
+                    <select id="var-modal-select" class="cart-select"></select>
                 </div>
 
-                <div class="form-group">
-                    <label for="order-type">Tipe Pesanan:</label>
-                    <select id="order-type">
-                        <option value="Makan di Tempat (Dine In)">Makan di Tempat (Dine In)</option>
-                        <option value="Bawa Pulang (Takeaway)">Bawa Pulang (Takeaway)</option>
-                        <option value="Kirim Antar (Delivery)">Kirim Antar (Delivery)</option>
-                    </select>
+                <!-- Special Notes -->
+                <div class="modal-section-box">
+                    <label for="var-modal-notes" class="form-section-title"><i data-lucide="edit-3"></i> Catatan Khusus
+                        (Opsional):</label>
+                    <input type="text" id="var-modal-notes" class="cart-input modal-input-clean"
+                        placeholder="Tulis catatan (cth: sambal dipisah, kuah banyak, bumbu medok)...">
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="table-num">Nomor Meja / Alamat Pengiriman:</label>
-                    <input type="text" id="table-num" placeholder="Contoh: Meja No. 04 / Jl. Anggrek No. 12">
-                </div>
-
-                <div class="form-group">
-                    <label for="extra-notes">Catatan Khusus (Opsional):</label>
-                    <input type="text" id="extra-notes" placeholder="Contoh: Pedas sedang, tanpa seledri...">
-                </div>
-
-                <!-- Input Voucher / Poin Diskon Pengurang Harga -->
-                <div class="form-group voucher-apply-box">
-                    <label for="voucher-input"><i data-lucide="ticket"></i> Punya Kode Voucher / Poin Diskon?</label>
-                    <div class="voucher-input-row">
-                        <input type="text" id="voucher-input" placeholder="Cth: TITIK10K, TITIK20K, SULTAN30K">
-                        <button type="button" class="btn btn-apply-voucher" onclick="applyVoucher()">Gunakan</button>
+            <!-- Modal Action Footer with Integrated Stepper -->
+            <div class="modal-footer food-modal-footer">
+                <div class="food-modal-qty-box">
+                    <span class="qty-label">Porsi:</span>
+                    <div class="modal-qty-stepper">
+                        <button type="button" class="btn-modal-qty" onclick="changeModalQty(-1)"
+                            aria-label="Kurangi porsi">-</button>
+                        <span id="var-modal-qty" class="modal-qty-val">1</span>
+                        <button type="button" class="btn-modal-qty" onclick="changeModalQty(1)"
+                            aria-label="Tambah porsi">+</button>
                     </div>
-                    <div id="voucher-status-msg" class="voucher-status-msg"></div>
+                </div>
+                <div class="food-modal-cta-box">
+                    <button type="button" class="btn btn-secondary btn-modal-cancel"
+                        onclick="closeVariantModal()">Batal</button>
+                    <button type="button" class="btn btn-primary btn-glow btn-modal-confirm"
+                        onclick="confirmVariantAddToCart()">
+                        <i data-lucide="plus-circle"></i> <span id="var-modal-btn-text">Tambah ke Keranjang • Rp
+                            0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: TULIS ULASAN PELANGGAN BERHADIAH +500 POIN -->
+    <div class="modal-overlay" id="reviewModal" role="dialog" aria-modal="true" aria-label="Tulis Ulasan Titik Rasa">
+        <div class="modal-card modal-review-card">
+            <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+            <div class="modal-header text-center">
+                <div class="reward-sparkle-seal"><i data-lucide="gift"></i> +500 POIN REWARD</div>
+                <h3>Tulis Ulasan & Pengalaman Kuliner</h3>
+                <p>Bagikan penilaian jujur Anda untuk membantu tamu lain dan dapatkan <strong>+500 Titik Poin</strong>
+                    langsung!</p>
+            </div>
+            <form onsubmit="submitCustomerReview(event)">
+                <div class="modal-body">
+                    <div class="form-group text-center">
+                        <label class="star-picker-label">Rating Kepuasan Anda:</label>
+                        <input type="hidden" id="rev-star-rating" value="5">
+                        <div class="star-picker-group">
+                            <button type="button" class="star-picker-btn active" onclick="setStarRatingInput(1)"><i
+                                    data-lucide="star" fill="currentColor"></i></button>
+                            <button type="button" class="star-picker-btn active" onclick="setStarRatingInput(2)"><i
+                                    data-lucide="star" fill="currentColor"></i></button>
+                            <button type="button" class="star-picker-btn active" onclick="setStarRatingInput(3)"><i
+                                    data-lucide="star" fill="currentColor"></i></button>
+                            <button type="button" class="star-picker-btn active" onclick="setStarRatingInput(4)"><i
+                                    data-lucide="star" fill="currentColor"></i></button>
+                            <button type="button" class="star-picker-btn active" onclick="setStarRatingInput(5)"><i
+                                    data-lucide="star" fill="currentColor"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rev-input-name"><i data-lucide="user"></i> Nama Anda</label>
+                        <input type="text" id="rev-input-name" required placeholder="Contoh: Budi Santoso"
+                            class="cart-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rev-input-dish"><i data-lucide="utensils"></i> Menu Paling Berkesan</label>
+                        <select id="rev-input-dish" class="cart-select"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rev-input-text"><i data-lucide="message-square"></i> Ulasan / Kesan Anda</label>
+                        <textarea id="rev-input-text" rows="3" required
+                            placeholder="Ceritakan rasa masakan, suasana tempat, atau keramahan pelayanan..."
+                            class="cart-input"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-glow">
+                        <i data-lucide="send"></i> Terbitkan Ulasan & Klaim Poin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DIGITAL BOOKING PASS (E-TIKET RESERVASI MEJA) -->
+    <div class="modal-overlay" id="bookingPassModal" role="dialog" aria-modal="true" aria-label="Digital Booking Pass">
+        <div class="modal-card booking-pass-card">
+            <button class="modal-close" onclick="closeBookingPassModal()">&times;</button>
+            <div class="pass-header">
+                <div class="pass-brand-seal">
+                    <img src="../assets/logo.jpg" alt="Logo" class="pass-logo">
+                    <div>
+                        <h4>Titik Rasa Nusantara</h4>
+                        <span>OFFICIAL DIGITAL BOOKING PASS</span>
+                    </div>
+                </div>
+                <div class="pass-status-badge">RESERVASI DITERBITKAN</div>
+            </div>
+
+            <div class="pass-body">
+                <div class="pass-code-banner">
+                    <small>KODE BOOKING MEJA:</small>
+                    <h2 id="pass-code">TR-RES-8829</h2>
                 </div>
 
-                <!-- Calculation Box -->
-                <div class="order-calc-box">
-                    <div class="calc-line">
-                        <span>Subtotal (<span id="calc-qty">1</span>x):</span>
-                        <span id="modal-subtotal-price">Rp 0</span>
+                <div class="pass-details-grid">
+                    <div class="pass-detail-item">
+                        <span class="pdi-label">Nama Pemesan</span>
+                        <strong id="pass-name">-</strong>
                     </div>
-                    <div class="calc-line discount-line is-hidden" id="discount-line">
-                        <span><i data-lucide="tag"></i> Potongan Diskon Poin:</span>
-                        <strong id="modal-discount-val">-Rp 0</strong>
+                    <div class="pass-detail-item">
+                        <span class="pdi-label">No. WhatsApp</span>
+                        <strong id="pass-phone">-</strong>
                     </div>
-                    <div class="calc-line total-line">
-                        <span>Total Akhir Pembayaran:</span>
-                        <strong id="modal-total-price">Rp 0</strong>
+                    <div class="pass-detail-item">
+                        <span class="pdi-label">Area Tempat</span>
+                        <strong id="pass-area">-</strong>
                     </div>
+                    <div class="pass-detail-item">
+                        <span class="pdi-label">Jumlah Tamu</span>
+                        <strong id="pass-guests">-</strong>
+                    </div>
+                    <div class="pass-detail-item full-width">
+                        <span class="pdi-label">Jadwal Kedatangan</span>
+                        <strong id="pass-datetime" class="highlight-date">-</strong>
+                    </div>
+                    <div class="pass-detail-item full-width">
+                        <span class="pdi-label">Catatan Permintaan</span>
+                        <p id="pass-notes">-</p>
+                    </div>
+                </div>
+
+                <div class="pass-qr-box">
+                    <div class="pass-qr-barcode">
+                        <span>||| | |||| || ||| |||| | || ||||| | ||| ||||</span>
+                    </div>
+                    <small>Tunjukkan tiket digital ini ke staf resepsionis Titik Rasa saat tiba di lokasi.</small>
+                </div>
+            </div>
+
+            <div class="pass-footer">
+                <button type="button" class="btn btn-whatsapp btn-block" id="btn-confirm-pass-wa">
+                    <i data-lucide="message-circle"></i> Kirim Konfirmasi ke WhatsApp Resepsionis
+                </button>
+                <button type="button" class="btn btn-secondary btn-block" onclick="closeBookingPassModal()">
+                    Tutup & Simpan Tiket
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: QRIS & DIGITAL PAYMENT SIMULATION -->
+    <div class="modal-overlay" id="qrisModal" role="dialog" aria-modal="true" aria-label="QRIS Titik Rasa">
+        <div class="modal-card modal-qris-card">
+            <button class="modal-close" onclick="closeQrisModal()">&times;</button>
+            <div class="qris-header text-center">
+                <span class="qris-brand-title">QRIS NUSANTARA</span>
+                <span class="qris-merchant">TITIK RASA KULINER NUSANTARA</span>
+                <span class="qris-nmid">NMID: ID1020304050607 • Badung, Bali</span>
+            </div>
+
+            <div class="qris-code-container text-center">
+                <div class="qris-qr-box">
+                    <!-- High quality SVG QRIS Representation -->
+                    <svg viewBox="0 0 100 100" class="qris-svg" width="180" height="180">
+                        <rect width="100" height="100" fill="#FFFFFF" />
+                        <!-- QR position markers -->
+                        <rect x="5" y="5" width="25" height="25" fill="#111827" />
+                        <rect x="9" y="9" width="17" height="17" fill="#FFFFFF" />
+                        <rect x="13" y="13" width="9" height="9" fill="#111827" />
+
+                        <rect x="70" y="5" width="25" height="25" fill="#111827" />
+                        <rect x="74" y="9" width="17" height="17" fill="#FFFFFF" />
+                        <rect x="78" y="13" width="9" height="9" fill="#111827" />
+
+                        <rect x="5" y="70" width="25" height="25" fill="#111827" />
+                        <rect x="9" y="74" width="17" height="17" fill="#FFFFFF" />
+                        <rect x="13" y="78" width="9" height="9" fill="#111827" />
+
+                        <!-- QR data matrix dots -->
+                        <rect x="35" y="8" width="5" height="5" fill="#111827" />
+                        <rect x="45" y="8" width="8" height="5" fill="#111827" />
+                        <rect x="58" y="8" width="5" height="5" fill="#111827" />
+
+                        <rect x="35" y="18" width="10" height="5" fill="#111827" />
+                        <rect x="50" y="18" width="12" height="5" fill="#111827" />
+
+                        <rect x="8" y="35" width="5" height="10" fill="#111827" />
+                        <rect x="18" y="35" width="8" height="5" fill="#111827" />
+                        <rect x="8" y="50" width="12" height="5" fill="#111827" />
+
+                        <rect x="35" y="35" width="30" height="30" fill="#D97706" rx="4" />
+                        <circle cx="50" cy="50" r="8" fill="#FFFFFF" />
+                        <circle cx="50" cy="50" r="4" fill="#991B1B" />
+
+                        <rect x="70" y="35" width="8" height="15" fill="#111827" />
+                        <rect x="85" y="35" width="10" height="8" fill="#111827" />
+                        <rect x="75" y="55" width="15" height="10" fill="#111827" />
+
+                        <rect x="35" y="72" width="10" height="8" fill="#111827" />
+                        <rect x="50" y="72" width="15" height="5" fill="#111827" />
+                        <rect x="70" y="72" width="8" height="18" fill="#111827" />
+                        <rect x="82" y="72" width="12" height="8" fill="#111827" />
+                        <rect x="40" y="85" width="22" height="8" fill="#111827" />
+                    </svg>
+                </div>
+                <div class="qris-amount-tag">
+                    <span>Total Tagihan:</span>
+                    <h2 id="qris-modal-amount">Rp 0</h2>
+                </div>
+                <div class="qris-wallets-row">
+                    <span>BCA Mobile</span> • <span>GoPay</span> • <span>OVO</span> • <span>ShopeePay</span> •
+                    <span>Dana</span> • <span>LinkAja</span>
+                </div>
+            </div>
+
+            <div class="bank-transfer-details">
+                <div class="btd-item">
+                    <div>
+                        <strong>Bank BCA</strong>
+                        <span class="acc-num">882-990-1234</span>
+                        <small>a.n TITIK RASA NUSANTARA</small>
+                    </div>
+                    <button type="button" class="btn-copy-acc" onclick="copyBankNumber('8829901234')">
+                        <i data-lucide="copy"></i> Salin
+                    </button>
+                </div>
+                <div class="btd-item">
+                    <div>
+                        <strong>Bank Mandiri</strong>
+                        <span class="acc-num">145-00-987654-3</span>
+                        <small>a.n TITIK RASA NUSANTARA</small>
+                    </div>
+                    <button type="button" class="btn-copy-acc" onclick="copyBankNumber('145009876543')">
+                        <i data-lucide="copy"></i> Salin
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block" onclick="closeQrisModal()">
+                    <i data-lucide="check"></i> Selesai & Lanjutkan ke Pesanan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: DINE-IN TABLE QR SIMULATOR -->
+    <div class="modal-overlay" id="tableSimulatorModal" role="dialog" aria-modal="true" aria-label="Simulasi Scan Meja">
+        <div class="modal-card table-sim-card">
+            <button class="modal-close" onclick="closeTableSimulatorModal()">&times;</button>
+            <div class="modal-header text-center">
+                <div class="table-sim-icon"><i data-lucide="qr-code"></i></div>
+                <h3>Simulasi Scan Meja Restoran</h3>
+                <p>Pilih nomor meja di bawah ini untuk mensimulasikan pemesanan langsung dari meja restoran di Titik
+                    Rasa.</p>
+            </div>
+            <div class="modal-body">
+                <div class="table-grid-buttons">
+                    <button type="button" class="btn-table-choice" onclick="simulateTableScan('01')">
+                        <strong>Meja 01</strong>
+                        <small>🌿 Area Taman</small>
+                    </button>
+                    <button type="button" class="btn-table-choice" onclick="simulateTableScan('05')">
+                        <strong>Meja 05</strong>
+                        <small>❄️ Indoor AC</small>
+                    </button>
+                    <button type="button" class="btn-table-choice" onclick="simulateTableScan('08')">
+                        <strong>Meja 08</strong>
+                        <small>❄️ Dekat Musik</small>
+                    </button>
+                    <button type="button" class="btn-table-choice" onclick="simulateTableScan('12')">
+                        <strong>Meja 12</strong>
+                        <small>🛖 Saung Lesehan</small>
+                    </button>
+                    <button type="button" class="btn-table-choice" onclick="simulateTableScan('VIP-1')">
+                        <strong>VIP Room 1</strong>
+                        <small>👑 Private AC</small>
+                    </button>
+                    <button type="button" class="btn-table-choice" onclick="simulateTableScan('VIP-2')">
+                        <strong>VIP Room 2</strong>
+                        <small>👑 Rapat / Family</small>
+                    </button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeOrderModal()">Batal</button>
-                <button class="btn btn-whatsapp" onclick="sendWhatsAppOrder()">
-                    <i data-lucide="message-circle"></i> Kirim Pesanan via WhatsApp
+                <button type="button" class="btn btn-secondary btn-block" onclick="closeTableSimulatorModal()">
+                    Batal
                 </button>
             </div>
         </div>
@@ -1442,14 +1800,15 @@
                 <div class="faq-accordion">
                     <h4>Pertanyaan Sering Diajukan (FAQ)</h4>
                     <details class="faq-item">
-                        <summary>Apakah makanan di Titik Rasa 100% Halal?</summary>
-                        <p>Ya, seluruh bahan baku dan proses pengolahan makanan di Titik Rasa 100% Halal tanpa bahan
-                            alkohol atau pengawet berbahaya.</p>
+                        <summary>Bagaimana standar kehalalan dan pemisahan dapur di Titik Rasa?</summary>
+                        <p>Titik Rasa menjaga kenyamanan seluruh pelanggan dengan menerapkan <strong>Dua Dapur yang 100%
+                                Terpisah</strong>. Hidangan Halal dan Non-Halal dimasak di area dapur, wajan, pisau,
+                            alat masak, dan perlengkapan saji yang sepenuhnya mandiri & higienis.</p>
                     </details>
                     <details class="faq-item">
                         <summary>Bagaimana cara menukarkan Titik Poin dengan voucher?</summary>
                         <p>Kunjungi section Titik Poin, pilih voucher diskon yang diinginkan (Rp 10K, 20K, 30K), lalu
-                            klik 'Tukar & Pakai' untuk mengaktifkan potongan pada pesanan Anda.</p>
+                            klik 'Tukar & Pakai' untuk mengaktifkan potongan pada keranjang pesanan Anda.</p>
                     </details>
                     <details class="faq-item">
                         <summary>Kapan jadwal acara Live Music di Titik Rasa?</summary>
@@ -1497,6 +1856,18 @@
                 <button class="drawer-logout-btn" onclick="handleLogout()" title="Keluar / Ganti Akun">
                     <i data-lucide="log-out"></i>
                 </button>
+            </div>
+
+            <!-- Guest Card in Drawer -->
+            <div class="drawer-user-card drawer-guest-card" id="drawer-guest-info">
+                <div class="drawer-user-avatar guest-avatar"><i data-lucide="user"></i></div>
+                <div class="drawer-user-text">
+                    <strong>Mode Tamu</strong>
+                    <small>Dapatkan 25.000 Poin Member</small>
+                </div>
+                <a href="../login/login.html" class="btn-drawer-login" title="Masuk atau Daftar Akun">
+                    Masuk
+                </a>
             </div>
 
             <!-- Restaurant Status Pill -->
@@ -1608,7 +1979,8 @@
 
             <!-- Drawer Footer Info -->
             <div class="drawer-footer-info">
-                <p><i data-lucide="map-pin"></i> Jl. Tibung Sari No 1X, Dalung, Kec. Kuta Utara, Kabupaten Badung, Bali 80361</p>
+                <p><i data-lucide="map-pin"></i> Jl. Tibung Sari No 1X, Dalung, Kec. Kuta Utara, Kabupaten Badung, Bali
+                    80361</p>
                 <p><i data-lucide="phone"></i> 0851-3775-6784</p>
             </div>
         </div>
