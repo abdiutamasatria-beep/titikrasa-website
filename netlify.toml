@@ -1,25 +1,2 @@
-plugins = []
-headers = []
-redirects = []
-
-[functions]
-
-  [functions."*"]
-
 [build]
-publish = "C:\\Users\\satria\\PROJECT_WEBSITE_MAKANAN"
-publishOrigin = "ui"
-
-  [build.environment]
-
-  [build.processing]
-
-    [build.processing.css]
-
-    [build.processing.html]
-
-    [build.processing.images]
-
-    [build.processing.js]
-
-  [build.services]
+  publish = "."
