@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Titik Rasa</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-overlay active" id="login-gate">
+        <div class="login-backdrop-decor"></div>
+        <div class="login-card">
+            <div class="login-header text-center">
+                <div class="login-logo-seal">
+                    <img src="../assets/logo.jpg" alt="Logo Titik Rasa" class="login-logo-img">
+                </div>
+                <h2 class="login-brand-title">Titik Rasa</h2>
+                <span class="login-heritage-badge">PORTAL MEMBER NUSANTARA</span>
+                <p class="login-brand-sub">Masuk dengan nomor WhatsApp Anda untuk mengakses website & klaim
+                    <strong>Bonus 25.000 Titik Poin</strong>!
+                </p>
+            </div>
+
+            <form class="login-form" id="loginForm" onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label for="login-name"><i data-lucide="user"></i> Nama Lengkap / Pengguna</label>
+                    <input type="text" id="login-name" required placeholder="Contoh: Satria Abdi Utama" autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="login-phone"><i data-lucide="phone"></i> Nomor Telepon / WhatsApp</label>
+                    <input type="tel" id="login-phone" required placeholder="Contoh: 085137756784" autocomplete="tel">
+                    <small class="form-hint">Poin reward akan tersimpan & terhubung dengan nomor ini.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-pass"><i data-lucide="lock"></i> Password Member (Min. 6 Angka/Karakter)</label>
+                    <div class="password-input-wrap">
+                        <input type="password" id="login-pass" required minlength="6"
+                            placeholder="Masukkan minimal 6 angka/karakter" autocomplete="current-password">
+                        <button type="button" class="btn-toggle-pwd" onclick="togglePasswordVisibility()"
+                            aria-label="Lihat Password">
+                            <i data-lucide="eye" id="pwd-icon"></i>
+                        </button>
+                    </div>
+                    <small class="form-hint">Minimal 6 angka atau huruf untuk keamanan poin Anda.</small>
+                </div>
+
+                <div id="login-error-msg" class="login-error-alert is-hidden"></div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-login-submit">
+                    <i data-lucide="log-in"></i> Masuk / Daftar Member
+                </button>
+
+                <div class="login-divider"><span>atau</span></div>
+
+                <button type="button" class="btn btn-secondary btn-block btn-demo-login" onclick="fillDemoAccount()">
+                    <i data-lucide="sparkles"></i> Masuk Cepat (Akun Demo Satria Abdi Utama)
+                </button>
+
+                <a href="../home/index.html" class="btn btn-outline-guest btn-block" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; color: #475569; font-weight: 600; font-size: 0.9rem;">
+                    <i data-lucide="compass"></i> Jelajahi Dulu Sebagai Tamu (Guest Mode)
+                </a>
+            </form>
+
+            <div class="login-footer text-center">
+                <p><i data-lucide="shield-check"></i> 100% Data Aman • Terhubung ke Sistem WhatsApp Resto</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../home/script.js"></script>
+    <script src="../home/security.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
